@@ -1,11 +1,15 @@
 module.exports = () => {
-    var config = {
 
+    var src = './src';
+    var config = {
+        temp: './.temp',
         //all js to vet
         alljs: [
-            './src/**/*.js',
+            src + '/**/*.js',
             './*.js'
-        ]
+        ],
+        compass: src + '/**/*.scss'
+
     };
 
     return config;

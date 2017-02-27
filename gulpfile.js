@@ -7,21 +7,6 @@ var $ = require('gulp-load-plugins')({
     lazy: 'true'
 });
 
-gulp.task('compass', function () {
-    gulp.src('./src/**/*.scss')
-        .pipe($.compass({
-            config_file: './config.rb',
-            css: 'src/css',
-            sass: 'src/sass'
-        }))
-        .pipe(gulp.dest('dist/css'));
-});
-
-gulp.task('clean-styles', function () {
-    var files = './dist/**/*.css';
-    del(files);
-});
-
 gulp.task('vet', function () {
     log('Analyzing source with JSHint');
     return gulp.src(config.alljs)
@@ -33,7 +18,32 @@ gulp.task('vet', function () {
         .pipe($.jshint.reporter('fail'));
 });
 
+gulp.task('css', ['clean-styles'], function () {
+    log('Compile SASS --> CSS');
+    return gulp.src(config.compass)
+        .pipe($.compass({
+            config_file: './config.rb',
+            css: 'src/css',
+            sass: 'src/sass'
+        }))
+        .pipe($.autoprefixer({
+            browsers: ['last 2 version', '> 5%']
+        }))
+        .pipe(gulp.dest(config.temp));
+});
+
+gulp.task('clean-styles', function (done) {
+    var files = config.temp + ' **/*.css';
+    clean(files, done);
+});
+
+
 ////////////////////////
+function clean(path, done) {
+    log('Cleaning ' + $.util.colors.blue(path));
+    del(path, done);
+}
+
 function log(msg) {
     if (typeof (msg) === 'object') {
         for (var item in msg) {
