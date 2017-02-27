@@ -6,6 +6,16 @@ var $ = require('gulp-load-plugins')({
     lazy: 'true'
 });
 
+gulp.task('compass', function () {
+    gulp.src('./src/**/*.scss')
+        .pipe($.compass({
+            config_file: './config.rb',
+            css: 'src/css',
+            sass: 'src/sass'
+        }))
+        .pipe(gulp.dest('dist/css'));
+});
+
 gulp.task('vet', function () {
 
     log('Analyzing source with JSHint');
