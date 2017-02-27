@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var args = require('yargs').argv;
 var config = require('./gulp.config')();
+var del = require('del');
 
 var $ = require('gulp-load-plugins')({
     lazy: 'true'
@@ -16,8 +17,12 @@ gulp.task('compass', function () {
         .pipe(gulp.dest('dist/css'));
 });
 
-gulp.task('vet', function () {
+gulp.task('clean-styles', function () {
+    var files = './dist/**/*.css';
+    del(files);
+});
 
+gulp.task('vet', function () {
     log('Analyzing source with JSHint');
     return gulp.src(config.alljs)
         .pipe($.if(args.verbose, $.print()))
