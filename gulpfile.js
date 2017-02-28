@@ -8,8 +8,8 @@ var $ = require('gulp-load-plugins')({
   lazy: 'true'
 })
 
-// --> Tasks
-// -->Analyzing source with ESLint && TSLint
+// ==> Tasks
+// --> Analyzing source with ESLint && TSLint
 gulp.task('vet', ['vet_ts', 'vet_js'], function () {
   log('Analyzing source with ESHint && TSLint')
 })
@@ -33,16 +33,35 @@ gulp.task('vet_ts', function () {
     .pipe($.tslint.report())
 })
 
-gulp.task('js', function () {
+// --> Transpiling
+gulp.task('js', ['webpack', 'babel', 'tsc'])
+
+// TSC
+gulp.task('tsc', ['clean-tsc'], function () {
   var tsProject = ts.createProject('tsconfig.json')
 
-  return tsProject.src()
+  return tsProject
+    .src()
     .pipe(plumber())
     .pipe(tsProject())
-    .pipe($.babel())
-    .pipe(gulp.dest('.temp/js'))
+    .pipe(gulp.dest(config.es6_folder))
 })
-
+// Babel
+gulp.task('babel', ['clean-babel'], function () {
+  return gulp.src(config.es6_files)
+    .pipe(plumber())
+    .pipe($.babel())
+    .pipe(gulp.dest(config.es5_folder))
+})
+// Webpack
+gulp.task('webpack', ['clean-webpack'], function () {
+  return gulp
+    .src(config.es5_files)
+    .pipe(plumber())
+    .pipe($.webpack(require('./webpack.config.js')))
+    .pipe(gulp.dest(config.webpack_folder))
+})
+// SASS
 gulp.task('css', ['clean-styles'], function () {
   log('Compile SASS --> CSS')
   return gulp
@@ -59,13 +78,24 @@ gulp.task('css', ['clean-styles'], function () {
     .pipe(gulp.dest(config.css))
 })
 
-gulp.task('clean-styles', function () {
-  var files = config.css
+// --> Cleaning target folders
+gulp.task('clean-tsc', function () {
+  var files = config.temp_js
   clean(files)
 })
 
-gulp.task('clean-scripts', function () {
-  var files = config.js
+gulp.task('clean-babel', function () {
+  var files = config.es5_folder
+  clean(files)
+})
+
+gulp.task('clean-webpack', function () {
+  var files = config.webpack_files
+  clean(files)
+})
+
+gulp.task('clean-css', function () {
+  var files = config.css
   clean(files)
 })
 
@@ -74,12 +104,12 @@ gulp.task('css-w', ['css'], function () {
 })
 
 // --> Functions
-function clean (path) {
+function clean(path) {
   log('Cleaning ' + $.util.colors.blue(path))
   del(path)
 }
 
-function log (msg) {
+function log(msg) {
   if (typeof (msg) === 'object') {
     for (var item in msg) {
       if (msg.hasOwnProperty(item)) {
