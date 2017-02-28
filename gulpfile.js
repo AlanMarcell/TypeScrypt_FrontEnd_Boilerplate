@@ -1,5 +1,6 @@
 var gulp = require('gulp')
 var plumber = require('gulp-plumber')
+var runSequence = require('run-sequence');
 var args = require('yargs').argv
 var ts = require('gulp-typescript')
 var config = require('./gulp.config')()
@@ -34,7 +35,23 @@ gulp.task('vet_ts', function () {
 })
 
 // --> Transpiling
-gulp.task('js', ['webpack', 'babel', 'tsc'])
+gulp.task('js', function (callback) {
+  runSequence(
+    'tsc',
+    'babel',
+    'webpack',
+    callback)
+})
+
+gulp.task('build', function (callback) {
+  runSequence(
+    'tsc',
+    'babel',
+    'clean-tsc',
+    'webpack',
+    'clean-babel',
+    callback)
+})
 
 // TSC
 gulp.task('tsc', ['clean-tsc'], function () {
@@ -47,7 +64,7 @@ gulp.task('tsc', ['clean-tsc'], function () {
     .pipe(gulp.dest(config.es6_folder))
 })
 // Babel
-gulp.task('babel', ['clean-babel'], function () {
+gulp.task('babel', function () {
   return gulp.src(config.es6_files)
     .pipe(plumber())
     .pipe($.babel())
@@ -80,7 +97,7 @@ gulp.task('css', ['clean-styles'], function () {
 
 // --> Cleaning target folders
 gulp.task('clean-tsc', function () {
-  var files = config.temp_js
+  var files = config.temp
   clean(files)
 })
 
@@ -90,7 +107,7 @@ gulp.task('clean-babel', function () {
 })
 
 gulp.task('clean-webpack', function () {
-  var files = config.webpack_files
+  var files = config.webpack_folder
   clean(files)
 })
 

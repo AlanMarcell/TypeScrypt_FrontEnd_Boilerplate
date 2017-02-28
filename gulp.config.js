@@ -21,6 +21,11 @@ module.exports = () => {
     allts: [
       src + 'scripts/**.ts'
     ],
+
+    // Source Files
+    ts_files: temp + 'js/app.js',
+    ts_folder: temp + 'js/',
+
     // Transpiling
     // TSC
     es6_files: temp + 'js/app.js',
@@ -40,6 +45,5 @@ module.exports = () => {
 }
 
     // // Final Folders
-    // temp_js: temp + 'js/app.js',
     // dist_public_js: dist + 'public/',
     // dist_src_js: dist + 'src/',

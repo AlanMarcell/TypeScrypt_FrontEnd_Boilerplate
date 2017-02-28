@@ -1,5 +1,5 @@
 function foo() {
 
-    const y = 5;
-    const x = 1;
+    const alan = 5;
+    const thais = 1;
 }
