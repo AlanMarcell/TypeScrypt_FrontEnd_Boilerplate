@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var plumber = require('gulp-plumber');
 var args = require('yargs').argv;
 var config = require('./gulp.config')();
 var del = require('del');
@@ -17,9 +18,11 @@ gulp.task('vet', function () {
         .pipe($.jshint.reporter('fail'));
 });
 
-gulp.task('css', ['clean-styles'], function () {
+gulp.task('css', function () {
     log('Compile SASS --> CSS');
-    return gulp.src(config.compass)
+    return gulp
+        .src(config.compass)
+        .pipe(plumber())
         .pipe($.compass({
             config_file: './config.rb',
             css: config.css,
@@ -34,6 +37,10 @@ gulp.task('css', ['clean-styles'], function () {
 gulp.task('clean-styles', function () {
     var files = config.css;
     clean(files);
+});
+
+gulp.task('css-w', ['css'], function () {
+    gulp.watch([config.compass], ['css']);
 });
 
 ////////////////////////
