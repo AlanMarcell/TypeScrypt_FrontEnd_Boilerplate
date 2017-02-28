@@ -1,16 +1,17 @@
 module.exports = () => {
+    var src = './src/',
+        temp = './.temp/';
 
-    var src = './src';
     var config = {
-        temp: './.temp',
-        //all js to vet
+        src: src,
+        temp: temp,
         alljs: [
             src + '/**/*.js',
             './*.js'
         ],
-        compass: src + '/**/*.scss'
-
+        compass: src + '/**/*.scss',
+        css: temp + '/css',
+        sass: './src/sass/'
     };
-
     return config;
 };

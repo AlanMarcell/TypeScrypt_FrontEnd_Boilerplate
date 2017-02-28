@@ -2,7 +2,6 @@ var gulp = require('gulp');
 var args = require('yargs').argv;
 var config = require('./gulp.config')();
 var del = require('del');
-
 var $ = require('gulp-load-plugins')({
     lazy: 'true'
 });
@@ -23,25 +22,24 @@ gulp.task('css', ['clean-styles'], function () {
     return gulp.src(config.compass)
         .pipe($.compass({
             config_file: './config.rb',
-            css: 'src/css',
-            sass: 'src/sass'
+            css: config.css,
+            sass: config.sass
         }))
         .pipe($.autoprefixer({
             browsers: ['last 2 version', '> 5%']
         }))
-        .pipe(gulp.dest(config.temp));
+        .pipe(gulp.dest(config.css));
 });
 
-gulp.task('clean-styles', function (done) {
-    var files = config.temp + ' **/*.css';
-    clean(files, done);
+gulp.task('clean-styles', function () {
+    var files = config.css;
+    clean(files);
 });
-
 
 ////////////////////////
-function clean(path, done) {
+function clean(path) {
     log('Cleaning ' + $.util.colors.blue(path));
-    del(path, done);
+    del(path);
 }
 
 function log(msg) {
@@ -54,5 +52,4 @@ function log(msg) {
     } else {
         $.util.log($.util.colors.green(msg));
     }
-    console.log(msg);
 }
